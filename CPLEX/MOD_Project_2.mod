@@ -21,6 +21,9 @@ dvar boolean v[1..K][1..R];
 dvar boolean y[1..K][1..R];
 
 /* PARAMETERS */
+
+// Large constant
+int Mconst = ...;
 // Maximum number of mines in operation in a given year
 int Emax = ...;
 // Annual royalty payable on keeping a mine "open"
@@ -36,31 +39,61 @@ float c = ...;
 // Discount factor 
 float beta = ...;
 
+
 /* OBJECTIVE FUNCTION */
 
 maximize 
   sum( k in 1..K )
     sum(r in 1..R)
-      ( 0.9^( r-1 ) ) * (c * x[k][r] - u[k] * y[k][r]);
+      ( beta^( r-1 ) ) * (c * x[k][r] - u[k] * y[k][r]);
     
 /* CONSTRAINTS */
 
-//subject to {
-//  forall( i in 1..n )
-//    nonnegativeValue:
-//      x[i] >= 0;
-//      
-//  forall( i in 1..n )
-//    maxProductProduction:
-//      x[i] <= M[i];
-//  
-//  availableRawMaterial:
-//  	sum( i in 1..n)
-//  	  (p[i]*x[i] + e[i]*y[i]) <= Q;
-//  
-//      
-//  forall( i in 1..n )
-//    productionIdentification:
-//      x[i] <= Mconst * y[i];
-//      
-//}
+subject to {
+  
+  forall( k in 1..K )
+    forall( r in 1..R )
+      nonnegativeValue:
+        x[k][r] >= 0;
+  
+  forall( k in 1..K )
+    forall( r in 1..R )
+      operateMineFlag:
+        x[k][r] <= Mconst * v[k][r];
+  
+  forall( r in 1..R )
+    maxNumOfMinesInOperation:
+      sum( k in 1..K)
+        v[k][r] <= Emax;
+      
+  forall( k in 1..K )
+    forall( r in 1..R )
+      upperLimitOfOreMinedInMine:
+        x[k][r] <= xmax[k];
+  
+  forall( k in 1..K )
+    forall( r in 1..(R-1) )
+      openMineFlag_A:
+        y[k][r] <= v[k][r] + v[k][r+1];
+        
+  forall( k in 1..K )
+    forall( r in 1..(R-1) )
+      openMineFlag_B:
+        y[k][r] >= v[k][r];
+        
+  forall( k in 1..K )
+    forall( r in 1..(R-1) )
+      openMineFlag_C:
+        y[k][r] >= v[k][r+1];
+      
+  forall( k in 1..K )
+      openMineFlag_D:
+        y[k][R] == v[k][R];
+        
+  forall( r in 1..R )
+      mixedOreQuality:
+        sum( k in 1..K ) ( j[k] * x[k][r] )
+          ==
+            w[r] * sum( k in 1..K )( x[k][r] );
+      
+}

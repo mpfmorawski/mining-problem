@@ -9,6 +9,8 @@ K = 4;
 // Number of years the company plans to operate 
 R = 5;
 
+// Large constant
+Mconst = 10;
 // Maximum number of mines in operation in a given year
 Emax = 3;
 // Annual royalty payable on keeping a mine "open"
