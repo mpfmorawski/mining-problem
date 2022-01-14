@@ -5,61 +5,46 @@ Authors: Maciej Morawski, Kamil Wiłnicki  2022
 """
 
 import pulp
-from dataclasses import dataclass
-
-
-@dataclass
-class Params:
-    mines: list
-    years: list
-    M_const: int
-    E_max: int
-    u: list
-    x_max: list
-    j: list
-    w: list
-    c: float
-    beta: float
-
-
-def define_parameters():
-    Params.mines = ["1",
-                    "2",
-                    "3",
-                    "4"]
-    Params.years = ["1",
-                    "2",
-                    "3",
-                    "4",
-                    "5"]
-    Params.M_const = 10
-    Params.E_max = 3
-    Params.u = [5.,
-                4.,
-                4.,
-                5.]
-    Params.x_max = [2.0,
-                    2.5,
-                    1.3,
-                    3.0]
-    Params.j = [1.0,
-                0.7,
-                1.5,
-                0.5]
-    Params.w = [0.9,
-                0.8,
-                1.2,
-                0.6,
-                1.0]
-    Params.c = 10.
-    Params.beta = 0.9
-    return Params
+import parameters
 
 
 def main():
     text_to_print = "Solving the Mining problem using a linear solver"
-    params = define_parameters()
+
+    # creation of LP problem
+    prob = pulp.LpProblem("The_Mining_Problem", pulp.LpMaximize)
+
+    # parameters
+    params = parameters.define_parameters()
     print(params)
+
+    # variables
+    x = pulp.LpVariable.dicts("minedOre", (params.mines, params.years), 0, None)
+    v = pulp.LpVariable.dicts("flagIfOreExtracted", (params.mines, params.years), 0, 1)
+    y = pulp.LpVariable.dicts("flagIfMineActive", (params.mines, params.years), 0, 1)
+
+    # objective function
+    prob += (
+        pulp.lpSum([(params.beta ** (int(r)-1)) * (params.c * x[k][r] - params.u[k] * y[k][r])
+                    for (k, r) in [(k, r) for k in params.mines for r in params.years]]),
+        "Income",
+    )
+
+    # constraints
+
+
+    # The problem data is written to an .lp file
+    prob.writeLP("Mining.lp")
+
+    # The problem is solved using PuLP's choice of Solver
+    prob.solve()
+
+    # The status of the solution is printed to the screen
+    print("Status:", pulp.LpStatus[prob.status])
+
+    # Show the solution
+    for i in prob.variables():
+        print(i.name, "=", i.varValue)
 
 
 if __name__ == "__main__":
