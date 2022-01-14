@@ -27,42 +27,32 @@ def define_parameters():
                     "2",
                     "3",
                     "4"]
-
     Params.years = ["1",
                     "2",
                     "3",
                     "4",
                     "5"]
-
     Params.M_const = 10
-
     Params.E_max = 3
-
     Params.u = [5.,
                 4.,
                 4.,
                 5.]
-
     Params.x_max = [2.0,
                     2.5,
                     1.3,
                     3.0]
-
     Params.j = [1.0,
                 0.7,
                 1.5,
                 0.5]
-
     Params.w = [0.9,
                 0.8,
                 1.2,
                 0.6,
                 1.0]
-
     Params.c = 10.
-
     Params.beta = 0.9
-
     return Params
 
 
