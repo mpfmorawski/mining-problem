@@ -7,6 +7,25 @@ Authors: Maciej Morawski, Kamil Wiłnicki  2022
 import pulp
 import parameters
 
+# Example for calculate_opened_from_operated demonstration
+v_example = [
+    [1, 1, 0, 0, 1],
+    [1, 0, 0, 0, 1],
+    [0, 0, 1, 1, 1],
+    [1, 0, 0, 0, 1]
+]
+
+
+def calculate_opened_from_operated(v):
+    y = [[0 for col in range(len(v[0]))] for row in range(len(v))]
+    for k in range(len(v)):
+        for r in range(len(v[k]) - 1):
+            if v[k][r] == 1 or v[k][r + 1] == 1:
+                y[k][r] = 1
+        if v[k][-1] == 1:
+            y[k][-1] = 1
+    return y
+
 
 def main():
     text_to_print = "Solving the Mining problem using a linear solver"
@@ -55,7 +74,7 @@ def main():
     for k in params.mines:
         for r in params.years[:-1]:
             prob += (
-                y[k][r] <= v[k][r] + v[k][str(int(r)+1)],
+                y[k][r] <= v[k][r] + v[k][str(int(r) + 1)],
                 "Opened mine {0} in year {1} flag - constraint A".format(k, r),
             )
 
@@ -69,7 +88,7 @@ def main():
     for k in params.mines:
         for r in params.years[:-1]:
             prob += (
-                y[k][r] >= v[k][str(int(r)+1)],
+                y[k][r] >= v[k][str(int(r) + 1)],
                 "Opened mine {0} in year {1} flag - constraint C".format(k, r),
             )
 
@@ -77,14 +96,14 @@ def main():
         prob += (
             y[k][params.years[-1]] == v[k][params.years[-1]],
             "Opened mine {0} in year {1} flag - constraint D".format(k, params.years[-1]),
-            )
+        )
 
     for r in params.years:
         prob += (
-            pulp.lpSum(params.j[k]*x[k][r] for k in params.mines) ==
-            pulp.lpSum(params.w[r]*x[k][r] for k in params.mines),
+            pulp.lpSum(params.j[k] * x[k][r] for k in params.mines) ==
+            pulp.lpSum(params.w[r] * x[k][r] for k in params.mines),
             "Limitation on the required quality of mixed ore in year {0}".format(r),
-            )
+        )
 
     # The problem data is written to an .lp file
     prob.writeLP("Mining.lp")
