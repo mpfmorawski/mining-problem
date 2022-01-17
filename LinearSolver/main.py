@@ -1,5 +1,5 @@
 """
-The Mining Problem solution using Python and MILP solver
+The Mining Problem solution using Python and linear solver
 
 Authors: Maciej Morawski, Kamil Wiłnicki  2022
 """
