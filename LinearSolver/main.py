@@ -24,6 +24,7 @@ v_example_a = [
     1, 0, 0, 0, 1
 ]
 
+
 def calculate_opened_from_operated(v):
     y = [[0 for col in range(len(v[0]))] for row in range(len(v))]
     for k in range(len(v)):
@@ -34,11 +35,12 @@ def calculate_opened_from_operated(v):
             y[k][-1] = 1
     return y
 
-def list_to_dict(input_list, parametres):
+
+def list_to_dict(input_list, params):
     output_dict = {}
     sub_dict = {}
-    for mine in parametres.mines:
-        for year in parametres.years:
+    for mine in params.mines:
+        for year in params.years:
             sub_dict[year] = input_list[int(mine)-1][int(year)-1]
         output_dict[mine] = copy.deepcopy(sub_dict)
     
@@ -63,7 +65,6 @@ def solve(input_v):
 
     # variables
     x = pulp.LpVariable.dicts("minedOre", (params.mines, params.years), 0, None)
-    
 
     # objective function
     prob += (
@@ -141,9 +142,10 @@ def solve(input_v):
     for i in prob.variables():
         print(i.name, "=", i.varValue)
 
-    #return goal function value
+    # return goal function value
     print(prob.objective)
     return prob.objective.value()
+
 
 if __name__ == "__main__":
     final_value = solve(v_example_a)

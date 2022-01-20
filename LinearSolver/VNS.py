@@ -1,5 +1,5 @@
 """
-The Mining Problem VNS heuristic for problem solving with linear solver only
+The Mining Problem VNS heuristic for solving problem with linear solver only
 
 Authors: Maciej Morawski, Kamil Wiłnicki  2022
 """
@@ -8,7 +8,8 @@ import random
 import itertools
 import main
 
-#neighbourhood structures
+
+# neighbourhood structures
 def generate_neighbourhood(x):
     for k_set in range(1, K_MAX+1):
         N_k = []
@@ -17,7 +18,8 @@ def generate_neighbourhood(x):
         for indices in indices_combination:
             N_k.append(swap_indices(x[:], indices))
         N.append(N_k)
-    #print (N[0])
+    # print (N[0])
+
 
 def swap_indices(v_old, indices_list):
     v_new = v_old
@@ -26,7 +28,8 @@ def swap_indices(v_old, indices_list):
     
     return v_new
 
-#starting value of v 
+
+# starting value of v
 v_start = [
     1, 1, 0, 0, 1,
     1, 0, 0, 0, 1,
@@ -44,14 +47,14 @@ v_bis = []
 generate_neighbourhood(v_start)
 
 while k < K_MAX:
-    #v_prim_index = N[k].index(random.choice(N[k]))
-    #v_prim = N[k][v_prim_index]
+    # v_prim_index = N[k].index(random.choice(N[k]))
+    # v_prim = N[k][v_prim_index]
 
     v_prim = random.choice(N[k])
-    #print(v_prim)
+    # print(v_prim)
     v_prim_index = N[k].index(v_prim)
 
-    #solve greedily with result v_bis
+    # solve greedily with result v_bis
     if N[k][v_prim_index-1] is not None and main.solve(N[k][v_prim_index-1]) > main.solve(v_prim):
         v_prim_index = v_prim_index - 1
         v_prim = N[k][v_prim_index]
