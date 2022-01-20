@@ -6,6 +6,7 @@ Authors: Maciej Morawski, Kamil Wiłnicki  2022
 
 import pulp
 import parameters
+import copy
 
 # Example for calculate_opened_from_operated demonstration
 v_example = [
@@ -15,6 +16,13 @@ v_example = [
     [1, 0, 0, 0, 1]
 ]
 
+# Example for demonstration of solve as a separate function
+v_example_a = [
+    1, 1, 0, 0, 1,
+    1, 0, 0, 0, 1,
+    0, 0, 1, 1, 1,
+    1, 0, 0, 0, 1
+]
 
 def calculate_opened_from_operated(v):
     y = [[0 for col in range(len(v[0]))] for row in range(len(v))]
@@ -26,8 +34,18 @@ def calculate_opened_from_operated(v):
             y[k][-1] = 1
     return y
 
+def list_to_dict(input_list, parametres):
+    output_dict = {}
+    sub_dict = {}
+    for mine in parametres.mines:
+        for year in parametres.years:
+            sub_dict[year] = input_list[int(mine)-1][int(year)-1]
+        output_dict[mine] = copy.deepcopy(sub_dict)
+    
+    return output_dict
 
-def main():
+
+def solve(input_v):
     text_to_print = "Solving the Mining problem using a linear solver"
 
     # creation of LP problem
@@ -36,11 +54,16 @@ def main():
     # parameters
     params = parameters.define_parameters()
     print(params)
+    list_v = [input_v[len(params.years)*m:len(params.years)*m+len(params.years)] for m in range(len(params.mines))] #convert back to list of lists
+    v = list_to_dict(list_v, params)
+    print(v)
+    list_y = calculate_opened_from_operated(list_v)
+    y = list_to_dict(list_y, params)
+    print(y)
 
     # variables
     x = pulp.LpVariable.dicts("minedOre", (params.mines, params.years), 0, None)
-    v = pulp.LpVariable.dicts("flagIfOreExtracted", (params.mines, params.years), 0, 1, pulp.LpInteger)
-    y = pulp.LpVariable.dicts("flagIfMineActive", (params.mines, params.years), 0, 1, pulp.LpInteger)
+    
 
     # objective function
     prob += (
@@ -118,6 +141,10 @@ def main():
     for i in prob.variables():
         print(i.name, "=", i.varValue)
 
+    #return goal function value
+    print(prob.objective)
+    return prob.objective.value()
 
 if __name__ == "__main__":
-    main()
+    final_value = solve(v_example_a)
+    print(final_value)
