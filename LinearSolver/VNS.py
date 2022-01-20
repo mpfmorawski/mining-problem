@@ -38,6 +38,7 @@ v_start = [
 ]
 
 SIZE = 20
+ITERATION_COUNT = 100
 K_MAX = 7
 N = []
 
@@ -46,15 +47,12 @@ v_bis = []
 
 generate_neighbourhood(v_start)
 
-while k < K_MAX:
-    # v_prim_index = N[k].index(random.choice(N[k]))
-    # v_prim = N[k][v_prim_index]
-
+for q in range(ITERATION_COUNT):
+    
     v_prim = random.choice(N[k])
-    # print(v_prim)
     v_prim_index = N[k].index(v_prim)
 
-    # solve greedily with result v_bis
+    # solve greedily with v_bis as a result 
     if N[k][v_prim_index-1] is not None and main.solve(N[k][v_prim_index-1]) > main.solve(v_prim):
         v_prim_index = v_prim_index - 1
         v_prim = N[k][v_prim_index]
@@ -64,13 +62,17 @@ while k < K_MAX:
     else:
         v_bis = v_prim[:]
 
-    if main.solve(v_bis) > main.solve(v_start):
-        v_start = v_bis[:]
-        k = 1
-        print("generate neighbourhood")
-        generate_neighbourhood(v_start)
-    else:
-        k = k + 1
-        print("increment")
+    if v_bis is not None:
+        if main.solve(v_bis) > main.solve(v_start):
+            v_start = v_bis[:]
+            k = 1
+            print("generate neighbourhood")
+            generate_neighbourhood(v_start)
+        else:
+            k = k + 1
+            print("increment")
+    
+    if k >= K_MAX:
+        break
 
 print(v_bis)
