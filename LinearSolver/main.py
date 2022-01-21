@@ -25,6 +25,7 @@ v_example_a = [
 ]
 
 
+
 def calculate_opened_from_operated(v):
     y = [[0 for col in range(len(v[0]))] for row in range(len(v))]
     for k in range(len(v)):
@@ -58,13 +59,17 @@ def solve(input_v):
 
     # parameters
     params = parameters.define_parameters()
-    print(params)
+    #print(params)
     list_v = [input_v[len(params.years)*m:len(params.years)*m+len(params.years)] for m in range(len(params.mines))] #convert back to list of lists
     v = list_to_dict(list_v, params)
-    print(v)
+
+    with open('log.txt', 'a') as file:
+        file.write(str(input_v)+"\n")
+    
+    
     list_y = calculate_opened_from_operated(list_v)
     y = list_to_dict(list_y, params)
-    print(y)
+    #print(y)
 
     # variables
     x = pulp.LpVariable.dicts("minedOre", (params.mines, params.years), 0, None)
@@ -142,12 +147,18 @@ def solve(input_v):
     print("Status:", pulp.LpStatus[prob.status])
 
     # Show the solution
-    for i in prob.variables():
-        print(i.name, "=", i.varValue)
+    #for i in prob.variables():
+        #print(i.name, "=", i.varValue)
 
     # return goal function value
-    print(prob.objective)
-    return prob.objective.value()
+    if pulp.LpStatus[prob.status] == "Infeasible":
+        with open('log.txt', 'a') as file:
+            file.write("Infeasible\n")
+        return -1000
+    else:
+        with open('log.txt', 'a') as file:
+            file.write(str(prob.objective.value())+"\n")
+        return prob.objective.value()
 
 
 if __name__ == "__main__":
