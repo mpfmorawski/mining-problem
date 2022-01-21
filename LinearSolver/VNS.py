@@ -7,7 +7,7 @@ Authors: Maciej Morawski, Kamil Wiłnicki  2022
 import random
 import itertools
 import main
-
+import time
 
 # neighbourhood structures
 def generate_neighbourhood(x):
@@ -28,13 +28,12 @@ def swap_indices(v_old, indices_list):
     
     return v_new
 
-
 # starting value of v
 v_start = [
     1, 1, 1, 1, 1,
-    0, 0, 1, 1, 1,
-    1, 1, 1, 1, 1,
-    1, 1, 1, 1, 0
+    0, 0, 0, 1, 1,
+    1, 1, 1, 0, 1,
+    1, 1, 0, 0, 0
 ]
 
 SIZE = 20
@@ -43,6 +42,8 @@ K_MAX = 7
 N = []
 
 v_bis = None
+
+start_time = time.process_time()
 
 generate_neighbourhood(v_start)
 
@@ -98,5 +99,9 @@ for q in range(ITERATION_COUNT):
                 with open('log.txt', 'a') as file:
                     file.write("Broadening neighbourhood\n---------------\n")
 
+stop_time = time.process_time()
 
 print("Best solution found:\n"+str(v_start))
+
+total_time = float(stop_time - start_time)
+print(total_time)
