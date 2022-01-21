@@ -1,2 +1,3 @@
 .idea/
 Python/__pycache__/parameters.cpython*
+/LinearSolver/Mining.lp

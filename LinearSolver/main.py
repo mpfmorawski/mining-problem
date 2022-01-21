@@ -137,9 +137,6 @@ def solve(input_v):
             "Limitation on the required quality of mixed ore in year {0}".format(r),
         )
 
-    # The problem data is written to an .lp file
-    prob.writeLP("Mining.lp")
-
     # The problem is solved using PuLP's choice of Solver
     prob.solve(solver)
 
