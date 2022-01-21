@@ -50,6 +50,9 @@ def list_to_dict(input_list, params):
 def solve(input_v):
     text_to_print = "Solving the Mining problem using a linear solver"
 
+    # selection of a solver
+    solver = pulp.PULP_CBC_CMD(mip=False)
+
     # creation of LP problem
     prob = pulp.LpProblem("The_Mining_Problem", pulp.LpMaximize)
 
@@ -133,7 +136,7 @@ def solve(input_v):
     prob.writeLP("Mining.lp")
 
     # The problem is solved using PuLP's choice of Solver
-    prob.solve()
+    prob.solve(solver)
 
     # The status of the solution is printed to the screen
     print("Status:", pulp.LpStatus[prob.status])
