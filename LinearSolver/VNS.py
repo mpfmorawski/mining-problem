@@ -60,11 +60,12 @@ for q in range(ITERATION_COUNT):
         solution_left = -1000
         solution_right = -1000
         solution = main.solve(v_prim)
-        if N[k][v_prim_index-1] is not None:
+        try:
             solution_left = main.solve(N[k][v_prim_index-1])
-        if N[k][v_prim_index+1] is not None:
             solution_right = main.solve(N[k][v_prim_index+1])
-    
+        except IndexError:
+            pass
+
         if solution_left > solution:
             v_prim_index = v_prim_index - 1
             v_prim = N[k][v_prim_index]
